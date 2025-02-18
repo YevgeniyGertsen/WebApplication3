@@ -48,6 +48,17 @@
             <li><a href="event.html">EVENT</a></li>
             <li><a href="team.html">TEAM</a></li>
             <li><a href="contact.html">CONTACT</a></li>
+            <li>
+                @if(User.Identity.IsAuthenticated)
+                {
+                    <a href="/Account/Logoff">@User.Identity.Name</a>
+                }
+                else
+                {
+                    <a href="/Account/Login">LogIn</a>
+                }
+
+            </li>
         </ul>
     </nav>
 </div>
