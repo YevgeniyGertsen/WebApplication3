@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
+﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Serilog.Context;
 using System.Diagnostics;
 using WebApplication3.Models;
 
@@ -11,15 +12,27 @@ namespace WebApplication3.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private UserManager<AppUser> _userManager;
-        public HomeController(ILogger<HomeController> logger, 
-            UserManager<AppUser> userManager)
+        private IMessage _message;
+
+        public HomeController(ILogger<HomeController> logger,
+            UserManager<AppUser> userManager,
+            IMessage message)
         {
             _logger = logger;
             _userManager = userManager;
+            _message = message;
         }
 
         public async Task<IActionResult> Index()
         {
+            _logger.LogTrace("Logging Trace Message");
+            _logger.LogDebug("Logging Debug Message");
+            _logger.LogInformation("Logging Information Message");
+            _logger.LogWarning("Logging Warning Message");
+            _logger.LogError("Logging Error Message");
+            _logger.LogCritical("Logging Critical Message");
+
+
             //AppUser user = new AppUser();
             //user.UserName = "admin";
             //user.Email = "gersen.e.a@gmail.com";
@@ -35,11 +48,20 @@ namespace WebApplication3.Controllers
         public IActionResult Contact()
         {
             return View();
-        } 
-        
-       
-        public IActionResult AddMessage(string name, string email, string message)
+        }
+
+        [HttpPost]
+        public IActionResult Contact(string name, string email, string message)
         {
+            _logger.LogInformation("Попытка отпраки сообщения для пользователя " +
+                "{name} на электронный адрес {email}",
+                name,email);
+                    
+            if (_message.SendMessage(email, "From Contact form", message))
+            {
+                _logger.LogError("При поптки отправить уведомление ({name}, {email}) " +
+                    "возникла ошибка", name, email);
+            }
             return View();
         }
 
