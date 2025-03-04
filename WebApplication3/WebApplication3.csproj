@@ -30,6 +30,10 @@
 
   <ItemGroup>
     <Folder Include="Logs\" />
+    <Folder Include="Resources\Controllers\" />
+    <Folder Include="Resources\Views\Account\" />
+    <Folder Include="Resources\Views\Home\" />
+    <Folder Include="Resources\Views\Team\" />
   </ItemGroup>
 
 </Project>

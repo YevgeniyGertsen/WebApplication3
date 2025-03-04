@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -37,12 +37,9 @@
                 <div class="col-lg-7 col-md-8 col-sm-8 hidden-xs">
                     <div class="header-top fix">
                         <div class="header-contact">
-                            <span class="text-theme">Contact:</span>
-                            <span>0088-234-675-827</span>
-                            <span> | </span>
                             <span class="text-theme">City: </span>
                             <span id="selectCity" style="cursor: pointer">- none -</span>
-
+                            @Html.Partial("_lang")
                         </div>
                         <div class="header-links">
                             <a href="https://www.facebook.com/"><i class="zmdi zmdi-facebook"></i></a>
@@ -248,6 +245,14 @@
 
     <script>
         $(document).ready(function () {
+            $('#CultureList').on('change', function () {
+                var selectedValue = $(this).val();
+
+                var culture = "/?culture=" + selectedValue + "&ui-culture=" + selectedValue;
+                document.getElementById("cultureForm").action = culture;
+                document.getElementById("cultureForm").submit();
+            });
+
 
             var city = '@Context.Request.Cookies["city"]';
             if (city.trim() !== "") {

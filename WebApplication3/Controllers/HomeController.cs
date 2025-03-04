@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Serilog.Context;
 using System.Diagnostics;
 using WebApplication3.Models;
+using WebApplication3.Services;
 
 namespace WebApplication3.Controllers
 {
@@ -23,8 +25,10 @@ namespace WebApplication3.Controllers
             _message = message;
         }
 
+
         public async Task<IActionResult> Index()
         {
+          
             _logger.LogTrace("Logging Trace Message");
             _logger.LogDebug("Logging Debug Message");
             _logger.LogInformation("Logging Information Message");
@@ -55,8 +59,8 @@ namespace WebApplication3.Controllers
         {
             _logger.LogInformation("Попытка отпраки сообщения для пользователя " +
                 "{name} на электронный адрес {email}",
-                name,email);
-                    
+                name, email);
+
             if (_message.SendMessage(email, "From Contact form", message))
             {
                 _logger.LogError("При поптки отправить уведомление ({name}, {email}) " +
@@ -81,5 +85,21 @@ namespace WebApplication3.Controllers
                 return Json(ex);
             }
         }
+
+        [HttpPost]
+        public IActionResult ChangeLanguage(string culture, string returnUrl)
+        {
+            Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+            new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(7)
+            }
+            );
+
+            return LocalRedirect(returnUrl);
+        }
+
     }
 }
