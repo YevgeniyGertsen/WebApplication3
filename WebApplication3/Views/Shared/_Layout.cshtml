@@ -200,9 +200,19 @@
             $('#CultureList').on('change', function () {
                 var selectedValue = $(this).val();
 
-                var culture = "/?culture=" + selectedValue + "&ui-culture=" + selectedValue;
-                document.getElementById("cultureForm").action = culture;
-                document.getElementById("cultureForm").submit();
+                $.ajax({
+                    url: '/home/ChangeLanguage',
+                    data: { culture: selectedValue },
+                    dataType: 'json',
+                    type: 'POST',
+                    success: function () {
+                        location.reload();
+                    }
+                })
+
+                // var culture = "/?culture=" + selectedValue + "&ui-culture=" + selectedValue;
+                // document.getElementById("cultureForm").action = culture;
+                // document.getElementById("cultureForm").submit();
             });
         })
     </script>

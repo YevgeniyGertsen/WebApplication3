@@ -28,7 +28,7 @@ namespace WebApplication3.Models
                     {
                         _localizer = (resourceKey, args) =>
                         {
-                            var stringResource = LocalizationService.GetStringResource(resourceKey, language.Id);
+                            var stringResource = LocalizationService.GetStringResources(resourceKey, language.Id);
 
                             if (stringResource == null || string.IsNullOrEmpty(stringResource.Value))
                             {

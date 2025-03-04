@@ -22,7 +22,7 @@ namespace WebApplication3.Controllers
             var language = _languageService.GetLanguageByCulture(currentCulture);
             if (language != null)
             {
-                var stringResource = _localizationService.GetStringResource(resourceKey, language.Id);
+                var stringResource = _localizationService.GetStringResources(resourceKey, language.Id);
                 if (stringResource == null || string.IsNullOrEmpty(stringResource.Value))
                 {
                     return new HtmlString(resourceKey);

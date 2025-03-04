@@ -12,7 +12,7 @@
 <span> | </span>
 <span class="text-theme">Lang:</span>
 <span>
-    <form id="cultureForm" asp-action="Index">
+    <form id="cultureForm" asp-action="ChangeLanguage" method="post">
         <select id="CultureList"
                 asp-for="@requestCulture.RequestCulture.UICulture.Name" asp-items="cultureItems">
         </select>

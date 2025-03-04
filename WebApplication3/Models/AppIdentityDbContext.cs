@@ -13,7 +13,5 @@ namespace WebApplication3.Models
 
         public DbSet<Language> Language { get; set; }
         public DbSet<StringResources> StringResources { get; set; }
-
-
     }
 }

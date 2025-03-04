@@ -4,7 +4,6 @@ namespace WebApplication3.Services
 {
     public interface ILocalizationService
     {
-        StringResources GetStringResource(string resourceKey, int languageId);
+        public StringResources GetStringResources(string recourceKey, int languageId);
     }
-
 }

@@ -23,23 +23,12 @@ builder.Services
     .AddControllersWithViews()
     .AddViewLocalization();
 
-#region Lang
-builder.Services.AddLocalization(options=>options.ResourcesPath= "Resources");
-
-builder.Services.Configure<RequestLocalizationOptions>(options =>
-{
-    var supportedCulture = new[]
-    {
-        new CultureInfo("ru-RU"),
-        new CultureInfo("kk-KZ"),
-        new CultureInfo("en-US")
-    };
-
-    options.DefaultRequestCulture = new RequestCulture(culture: "kk-KZ", uiCulture: "kk-KZ");
-    options.SupportedCultures = supportedCulture;
-    options.SupportedUICultures = supportedCulture;
-});
+#region DI
+builder.Services.AddScoped<ILanguageService, LanguageService>();
+builder.Services.AddScoped<ILocalizationService, LocalizationService>();
+builder.Services.AddTransient<IMessage, EmailSender>();
 #endregion
+
 
 #region Auth
 builder.Services.AddDbContext<AppIdentityDbContext>(options =>
@@ -56,11 +45,42 @@ builder.Services.ConfigureApplicationCookie(option =>
 });
 #endregion
 
-#region DI
-builder.Services.AddScoped<ILanguageService, LanguageService>();
-builder.Services.AddScoped<ILocalizationService, LocalizationService>();
-builder.Services.AddTransient<IMessage, EmailSender>();
+
+#region Lang with Resources
+//builder.Services.AddLocalization(options=>options.ResourcesPath= "Resources");
+
+//builder.Services.Configure<RequestLocalizationOptions>(options =>
+//{
+//    var supportedCulture = new[]
+//    {
+//        new CultureInfo("ru-RU"),
+//        new CultureInfo("kk-KZ"),
+//        new CultureInfo("en-US")
+//    };
+
+//    options.DefaultRequestCulture = new RequestCulture(culture: "kk-KZ", uiCulture: "kk-KZ");
+//    options.SupportedCultures = supportedCulture;
+//    options.SupportedUICultures = supportedCulture;
+//});
+
+
+var serviceProvider = builder.Services.BuildServiceProvider();
+
+var languageService = serviceProvider.GetRequiredService<ILanguageService>();
+var languages = languageService.GetLanguages();// kk-KZ
+var cultures = languages.Select(language => new CultureInfo(language.Culture)).ToList();
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture(culture: "kk-KZ", uiCulture: "kk-KZ");
+    options.SupportedCultures = cultures;
+    options.SupportedUICultures = cultures;
+});
+
 #endregion
+
+
+
 
 #region Logging
 Log.Logger = new LoggerConfiguration()

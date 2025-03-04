@@ -87,7 +87,7 @@ namespace WebApplication3.Controllers
         }
 
         [HttpPost]
-        public IActionResult ChangeLanguage(string culture, string returnUrl)
+        public JsonResult ChangeLanguage(string culture)
         {
             Response.Cookies.Append(
             CookieRequestCultureProvider.DefaultCookieName,
@@ -95,10 +95,9 @@ namespace WebApplication3.Controllers
             new CookieOptions
             {
                 Expires = DateTimeOffset.UtcNow.AddDays(7)
-            }
-            );
+            });
 
-            return LocalRedirect(returnUrl);
+            return Json(culture);
         }
 
     }
