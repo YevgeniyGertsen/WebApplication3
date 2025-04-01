@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -12,6 +13,9 @@ using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.Net;
+using Twilio.TwiML.Voice;
+using WebApplication3.AppFilter;
+using WebApplication3.AppMiddleware;
 using WebApplication3.Models;
 using WebApplication3.Services;
 using static Serilog.Sinks.MSSqlServer.ColumnOptions;
@@ -20,7 +24,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
-    .AddControllersWithViews()
+    .AddControllersWithViews(options =>
+    {
+        options.Filters.Add<TimeElapsedFilter>();
+        options.Filters.Add<CatchError>();
+    })
     .AddViewLocalization();
 
 #region DI
@@ -102,6 +110,8 @@ builder.Host.UseSerilog();
 #endregion
 
 
+
+
 var app = builder.Build();
 
 var supportedCulture = new[] { "en-US", "kk-KZ", "ru-RU", "uz-Latn-UZ" };
@@ -123,6 +133,72 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<UseTimeElapsed>();
+//app.UseRequestLogging();
+
+app.MapControllerRoute(
+    name: "contactUs",
+    pattern: "contact-us",
+    defaults: new { controller = "Home", action = "Contact" });
+
+////rooms → Показать все номера
+//app.MapControllerRoute(
+//    name: "rooms",
+//    pattern: "rooms",
+//    defaults: new { controller = "Room", action = "Index" });
+
+////rooms?category=luxury → Показать номера категории "люкс"
+//app.MapControllerRoute(
+//    name: "roomsCategory",
+//    pattern: "rooms/category/{category}",
+//    defaults: new { controller = "Room", action = "RoomList" });
+
+////rooms ? category = standard & capacity = 2 → Показать стандартные номера на 2 человек
+//app.MapControllerRoute(
+//    name: "roomsCategory",
+//    pattern: "rooms/category/{category}/{capacity}/",
+//    defaults: new { controller = "Room", action = "RoomList" });
+
+//// rooms/101 → Показать номер с ID 101
+//app.MapControllerRoute(
+//    name: "roomsCategory",
+//    pattern: "rooms/{roomId:int}",
+//    defaults: new { controller = "Room", action = "RoomDetails" });
+
+////rooms/luxury-101 → Показать номер категории люкс с ID 101
+//app.MapControllerRoute(
+//    name: "roomsCategory",
+//    pattern: "booking/luxury-{bookId:int}",
+//    defaults: new { controller = "Room", action = "RoomDetails" });
+
+
+
+////booking/101 → Показать форму бронирования для номера 101
+//app.MapControllerRoute(
+//    name: "roomsCategory",
+//    pattern: "booking/{bookId:int}",
+//    defaults: new { controller = "Booking", action = "BookingDetails" });
+
+////profile/bookings → Список всех бронирований пользователя
+//app.MapControllerRoute(
+//    name: "roomsCategory",
+//    pattern: "profile/bookings",
+//    defaults: new { controller = "Booking", action = "Profiles" });
+
+////profile/bookings/25 → Подробности по бронированию с ID 25
+//app.MapControllerRoute(
+//    name: "roomsCategory",
+//    pattern: "profile/bookings/{bookId:int}",
+//    defaults: new { controller = "Booking", action = "Profiles" });
+
+////search?checkIn=2025-04-01&checkOut=2025-04-10&guests=2
+//app.MapControllerRoute(
+//    name: "roomsCategory",
+//    pattern: "search/{checkIn:date}/{checkOut:date}/{guests:int}",
+//    defaults: new { controller = "Booking", action = "Search" });
+
+//app.MapGet("/Check", () => "Hello world");
 
 app.MapControllerRoute(
     name: "default",
