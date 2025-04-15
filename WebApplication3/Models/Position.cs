@@ -1,4 +1,4 @@
-﻿namespace HotelAtr.WebAdmin.Models
+﻿namespace WebApplication3.Models
 {
     public class Position
     {
