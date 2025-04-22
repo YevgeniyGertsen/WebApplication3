@@ -9,11 +9,15 @@ namespace WebApplication3.Controllers
     {
         private UserManager<AppUser> _userManager;
         private SignInManager<AppUser> _signInManager;
+        private TokenService _tokenService;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            TokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
         [AllowAnonymous]
@@ -30,7 +34,7 @@ namespace WebApplication3.Controllers
         {
             AppUser user = await _userManager.FindByEmailAsync(login.Email);
 
-            if(user!=null)
+            if (user != null)
             {
                 await _signInManager.SignOutAsync();
 
@@ -39,6 +43,9 @@ namespace WebApplication3.Controllers
 
                 if (result.Succeeded)
                 {
+                    var token = await _tokenService.GenerateAccessToken(user);
+                    Response.Cookies.Append("JwtToken", token);
+
                     return RedirectToAction("Index", "Home");
                 }
             }

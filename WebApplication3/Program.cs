@@ -35,6 +35,7 @@ builder.Services
 builder.Services.AddScoped<ILanguageService, LanguageService>();
 builder.Services.AddScoped<ILocalizationService, LocalizationService>();
 builder.Services.AddTransient<IMessage, EmailSender>();
+builder.Services.AddScoped<TokenService>();
 #endregion
 
 

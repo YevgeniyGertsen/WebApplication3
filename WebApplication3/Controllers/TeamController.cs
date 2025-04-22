@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 using WebApplication3.Models;
 
 namespace WebApplication3.Controllers
@@ -13,6 +14,10 @@ namespace WebApplication3.Controllers
 
             using (var client = new HttpClient())
             {
+                var jwt = Request.Cookies["JwtToken"];
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", jwt);
+
                 using (var request = await client
                     .GetAsync("http://localhost:5134/api/Team/getTeams"))
                 {
